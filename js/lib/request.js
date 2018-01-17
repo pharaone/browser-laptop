@@ -9,6 +9,8 @@ const session = electron.session
 const underscore = require('underscore')
 const urlParse = require('../../app/common/urlParse')
 
+var defaultSession = null
+
 /**
  * Sends a network request using Chromium's networks stack instead of Node's.
  * Depends on there being a loaded browser window available.
@@ -17,7 +19,9 @@ const urlParse = require('../../app/common/urlParse')
  */
 module.exports.request = (options, callback) => {
   var params
-  var defaultSession = session.defaultSession
+  if (!defaultSession) {
+    defaultSession = session.fromPartition('default')
+  }
   var responseType = options.responseType || 'text'
 
   if (!defaultSession) return callback(new Error('Request failed, no session available'))
